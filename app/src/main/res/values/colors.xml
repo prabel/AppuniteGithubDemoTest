@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4983C7</color>
+    <color name="colorPrimaryDark">#2d73c6</color>
+    <color name="colorAccent">#388E3C</color>
+    <color name="progress_overlay">#641e1e1e</color>
+    <color name="error_snackbar">#f0cf1c10</color>
+    <color name="comment_title_overlay">#F8F8F8</color>
+</resources>

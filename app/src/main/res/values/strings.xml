@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GithubDemo</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_connection_error">Please check your connection and try again.</string>
+    <string name="invalid_login_error">Incorrect credentials. Please try again.</string>
+    <string name="unknown_error">Something went wrong. Please try again.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="empty_issues">No issues in this repository</string>
+    <string name="no_comments">No other comments</string>
+    <string name="issue_number_format">#%1$s</string>
+    <string name="stars_format">%1$s</string>
+    <string name="open_issues_format">Open issues: %1$s</string>
+    <string name="empty_username_error">Username cannot be empty</string>
+    <string name="empty_password_error">Password cannot be empty</string>
+</resources>
