@@ -103,6 +103,7 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
                         }
 
                         // TODO open ReposirotyActivity
+                        // https://developer.github.com/v3/issues/
                     }
                 });
     }
