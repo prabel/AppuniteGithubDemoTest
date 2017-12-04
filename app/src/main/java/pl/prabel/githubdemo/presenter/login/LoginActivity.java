@@ -30,10 +30,11 @@ import pl.prabel.githubdemo.rx.RxVisibilityUtil;
 import retrofit.client.Response;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subscriptions.CompositeSubscription;
+import rx.subscriptions.Subscriptions;
 
 public class LoginActivity extends BaseActivity {
 
-    @Bind(R.id.password_edit_text)
     EditText passwordEditText;
     @Bind(R.id.username_edit_text)
     EditText usernameEditText;
@@ -51,44 +52,42 @@ public class LoginActivity extends BaseActivity {
     @Inject
     LoginPresenter presenter;
 
+    private CompositeSubscription compositeSubscription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        RxView.clicks(loginButton)
-                .compose(lifecycleMainObservable().<Void>bindLifecycle())
-                .map(new MapToUsernameWithPasswordFunc())
-                .filter(new ValidateUserCredentialsFunc())
-                .doOnNext(RxVisibilityUtil.showView(progressView))
-                .doOnNext(new KeyboardHelper.HideKeyboardAction(this))
-                .subscribe(presenter.loginObserver());
-
-        presenter.errorObservable()
-                .compose(lifecycleMainObservable().<Throwable>bindLifecycle())
-                .doOnNext(RxVisibilityUtil.hideView(progressView))
-                .map(new Func1<Throwable, String>() {
-                    @Override
-                    public String call(Throwable throwable) {
-                        if (throwable != null && throwable.getCause() instanceof NoConnectionException) {
-                            return getString(R.string.no_connection_error);
-                        }
-                        return getString(R.string.invalid_login_error);
-                    }
-                })
-                .subscribe(new CustomViewAction.SnackBarErrorMessageAction(container));
-
-        presenter.successResponse()
-                .compose(lifecycleMainObservable().<Response>bindLifecycle())
-                .doOnNext(RxVisibilityUtil.hideView(progressView))
-                .subscribe(new Action1<Response>() {
-                    @Override
-                    public void call(Response response) {
-                        finish();
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    }
-                });
+        compositeSubscription = Subscriptions.from(
+                RxView.clicks(loginButton)
+                        .map(new MapToUsernameWithPasswordFunc())
+                        .filter(new ValidateUserCredentialsFunc())
+                        .doOnNext(RxVisibilityUtil.showView(progressView))
+                        .doOnNext(new KeyboardHelper.HideKeyboardAction(this))
+                        .subscribe(presenter.loginObserver()),
+                presenter.errorObservable()
+                        .map(new Func1<Throwable, String>() {
+                            @Override
+                            public String call(Throwable throwable) {
+                                progressView.setVisibility(View.GONE);
+                                if (throwable != null && throwable.getCause() instanceof NoConnectionException) {
+                                    return getString(R.string.no_connection_error);
+                                }
+                                return getString(R.string.invalid_login_error);
+                            }
+                        })
+                        .subscribe(new CustomViewAction.SnackBarErrorMessageAction(container)),
+                presenter.successResponse()
+                        .subscribe(new Action1<Response>() {
+                            @Override
+                            public void call(Response response) {
+                                progressView.setVisibility(View.GONE);
+                                finish();
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            }
+                        }));
     }
 
     private class ValidateUserCredentialsFunc implements Func1<BothParams<String, String>, Boolean> {
@@ -118,6 +117,14 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeSubscription != null) {
+            compositeSubscription.clear();
+        }
+    }
+
     @Nonnull
     @Override
     public BaseActivityComponent createActivityComponent(@Nullable Bundle savedInstanceState, ApplicationComponent appComponent) {
@@ -134,7 +141,7 @@ public class LoginActivity extends BaseActivity {
             dependencies = ApplicationComponent.class,
             modules = ActivityModule.class
     )
-    interface LoginComponent extends BaseActivityComponent{
+    interface LoginComponent extends BaseActivityComponent {
         void inject(LoginActivity loginActivity);
     }
 }

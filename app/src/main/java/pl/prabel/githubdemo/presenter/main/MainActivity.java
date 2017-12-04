@@ -33,6 +33,8 @@ import pl.prabel.githubdemo.rx.CustomViewAction;
 import rx.Observer;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subscriptions.CompositeSubscription;
+import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends BaseActivity implements RepositoriesAdapter.Listener {
 
@@ -52,6 +54,8 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
     @Inject
     TokenPreferences tokenPreferences;
 
+    private CompositeSubscription compositeSubscription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,42 +74,40 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
-        presenter.getProgressObservable()
-                .compose(lifecycleMainObservable().<Boolean>bindLifecycle())
-                .subscribe(RxView.visibility(progressView));
 
-        presenter.getErrorObservable()
-                .compose(lifecycleMainObservable().<Throwable>bindLifecycle())
-                .map(new Func1<Throwable, String>() {
-                    @Override
-                    public String call(Throwable throwable) {
-                        if (throwable != null && throwable.getCause() instanceof NoConnectionException) {
-                            return getString(R.string.no_connection_error);
-                        }
-                        return getString(R.string.unknown_error);
-                    }
-                })
-                .subscribe(new CustomViewAction.SnackBarErrorMessageAction(container));
+        compositeSubscription = Subscriptions.from(
+                presenter.getProgressObservable()
+                        .compose(lifecycleMainObservable().<Boolean>bindLifecycle())
+                        .subscribe(RxView.visibility(progressView)),
+                presenter.getErrorObservable()
+                        .compose(lifecycleMainObservable().<Throwable>bindLifecycle())
+                        .map(new Func1<Throwable, String>() {
+                            @Override
+                            public String call(Throwable throwable) {
+                                if (throwable != null && throwable.getCause() instanceof NoConnectionException) {
+                                    return getString(R.string.no_connection_error);
+                                }
+                                return getString(R.string.unknown_error);
+                            }
+                        })
+                        .subscribe(new CustomViewAction.SnackBarErrorMessageAction(container)),
+                presenter.getRepositoriesObservable()
+                        .compose(lifecycleMainObservable().<ImmutableList<RepoModel>>bindLifecycle())
+                        .subscribe(adapter),
+                presenter.repoClickObservable()
+                        .compose(lifecycleMainObservable().<RepoModel>bindLifecycle())
+                        .subscribe(new Action1<RepoModel>() {
+                            @Override
+                            public void call(RepoModel repoModel) {
+                                if (repoModel.getOpenIssues() == 0) {
+                                    CustomViewAction.showInfromationSnackbar(getString(R.string.empty_issues), container);
+                                    return;
+                                }
 
-
-        presenter.getRepositoriesObservable()
-                .compose(lifecycleMainObservable().<ImmutableList<RepoModel>>bindLifecycle())
-                .subscribe(adapter);
-
-        presenter.repoClickObservable()
-                .compose(lifecycleMainObservable().<RepoModel>bindLifecycle())
-                .subscribe(new Action1<RepoModel>() {
-                    @Override
-                    public void call(RepoModel repoModel) {
-                        if (repoModel.getOpenIssues() == 0) {
-                            CustomViewAction.showInfromationSnackbar(getString(R.string.empty_issues), container);
-                            return;
-                        }
-
-                        // TODO open ReposirotyActivity
-                        // https://developer.github.com/v3/issues/
-                    }
-                });
+                                // TODO open RepositoryActivity
+                                // https://developer.github.com/v3/issues/
+                            }
+                        }));
     }
 
 
@@ -113,6 +115,14 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
     @Override
     public Observer<RepoModel> clickRepoAction() {
         return presenter.repoClickObserver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeSubscription != null) {
+            compositeSubscription.clear();
+        }
     }
 
     @Nonnull
