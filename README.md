@@ -1,5 +1,5 @@
 ## Zadanie #1
-Znaleźć i poprawić crash na podstawie [logów](crash.log.txt)
+Znaleźć i poprawić crash na podstawie [logów](crash_log.txt)
 
 ## Zadanie #2
 Na podstawie dokumentacji API Githuba (https://developer.github.com/v3/issues/) należy dorobić ekran wyświetlający liste `issues` wybranego repozytorium.
