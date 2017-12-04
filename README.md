@@ -6,3 +6,7 @@ Na podstawie dokumentacji API Githuba (https://developer.github.com/v3/issues/) 
 * utworzyć modele na podstawie przykładowych JSON z dokumentacji
 * utworzyć widok listy z użyciem RecyclerView
 * obsłużyć request przy pomocy RxJava i Retrofit
+
+
+* * *
+Rozwiązania należy umieścić na osobnym branchu `recruitment_imie_nazwisko`
