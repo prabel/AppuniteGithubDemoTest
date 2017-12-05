@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import butterknife.BindInt;
 import butterknife.ButterKnife;
 import pl.prabel.githubdemo.R;
 import pl.prabel.githubdemo.api.model.RepoModel;
@@ -37,7 +36,7 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
         private Subscription subscription;
         @Bind(R.id.repo_description_text_view)
         TextView repoDescriptionTextView;
-        @BindInt(R.id.repo_name_text_view)
+        @Bind(R.id.repo_name_text_view)
         TextView repoNameTextView;
 
         public ViewHolder(View itemView) {
