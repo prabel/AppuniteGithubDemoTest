@@ -12,18 +12,17 @@
         android:icon="@drawable/github_mark"
         android:label="@string/app_name"
         android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".presenter.login.LoginActivity"></activity>
         <activity
-            android:name=".presenter.login.LoginActivity">
-        </activity>
-        <activity android:name=".presenter.main.MainActivity"
+            android:name=".presenter.main.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity android:name=".presenter.issue.IssueActivity"></activity>
     </application>
 
 </manifest>

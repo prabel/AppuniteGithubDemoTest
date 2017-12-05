@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.appunite.detector.ChangesDetector;
 import com.appunite.detector.SimpleDetector;
@@ -15,6 +16,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import pl.prabel.githubdemo.BR;
 import pl.prabel.githubdemo.R;
@@ -32,38 +34,40 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
         Observer<RepoModel> clickRepoAction();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final ViewDataBinding bind;
+            private Subscription subscription;
 
-        private Subscription subscription;
+            @Bind(R.id.description)
+            TextView descriptionTextView;
+            @Bind(R.id.repository_name)
+            TextView repositoryNameTextView;
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            bind = DataBindingUtil.bind(itemView);
-            ButterKnife.bind(this, itemView);
-        }
+            public ViewHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
 
-        public void bind(final RepoModel item) {
-            bind.setVariable(BR.item, item);
+            public void bind(final RepoModel item) {
+                descriptionTextView.setText(item.getDescription());
+                repositoryNameTextView.setText(item.getFullName());
+                subscription = RxView.clicks(itemView)
+                        .map(new Func1<Void, RepoModel>() {
+                            @Override
+                            public RepoModel call(Void aVoid) {
+                                return item;
+                            }
+                        })
+                        .subscribe(listener.clickRepoAction());
+            }
 
-            subscription = RxView.clicks(itemView)
-                    .map(new Func1<Void, RepoModel>() {
-                        @Override
-                        public RepoModel call(Void aVoid) {
-                            return item;
-                        }
-                    })
-                    .subscribe(listener.clickRepoAction());
-        }
-
-        public void recycle() {
-            if (subscription != null) {
-                subscription.unsubscribe();
-                subscription = null;
+            public void recycle() {
+                if (subscription != null) {
+                    subscription.unsubscribe();
+                    subscription = null;
+                }
             }
         }
-    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

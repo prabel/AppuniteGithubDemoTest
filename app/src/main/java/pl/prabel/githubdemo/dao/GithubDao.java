@@ -14,6 +14,7 @@ import pl.prabel.githubdemo.api.ApiService;
 import pl.prabel.githubdemo.api.model.RepoModel;
 import rx.Observable;
 import rx.Scheduler;
+import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 
 @Singleton
