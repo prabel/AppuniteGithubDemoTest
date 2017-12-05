@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.google.common.base.Strings;
@@ -28,6 +29,7 @@ import pl.prabel.githubdemo.dagger.ActivityScope;
 import pl.prabel.githubdemo.dagger.ApplicationComponent;
 import pl.prabel.githubdemo.dagger.BaseActivityComponent;
 import pl.prabel.githubdemo.presenter.BaseActivity;
+import pl.prabel.githubdemo.presenter.issue.IssueActivity;
 import pl.prabel.githubdemo.presenter.login.LoginActivity;
 import pl.prabel.githubdemo.rx.CustomViewAction;
 import rx.Observer;
@@ -74,7 +76,6 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
-
         compositeSubscription = Subscriptions.from(
                 presenter.getProgressObservable()
                         .compose(lifecycleMainObservable().<Boolean>bindLifecycle())
@@ -103,8 +104,9 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
                                     CustomViewAction.showInfromationSnackbar(getString(R.string.empty_issues), container);
                                     return;
                                 }
-
-                                // TODO open RepositoryActivity
+                                Intent intent = new Intent(MainActivity.this, IssueActivity.class);
+                                intent.putExtra("repo_name", repoModel.getName());
+                                startActivity(intent);
                                 // https://developer.github.com/v3/issues/
                             }
                         }));

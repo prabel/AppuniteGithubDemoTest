@@ -3,7 +3,9 @@ package pl.prabel.githubdemo.presenter.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.appunite.rx.functions.BothParams;
@@ -33,8 +35,8 @@ import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
-public class LoginActivity extends BaseActivity {
-
+public class    LoginActivity extends BaseActivity {
+    @Bind(R.id.password_edit_text)
     EditText passwordEditText;
     @Bind(R.id.username_edit_text)
     EditText usernameEditText;

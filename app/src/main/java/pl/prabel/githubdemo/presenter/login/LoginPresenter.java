@@ -2,6 +2,7 @@ package pl.prabel.githubdemo.presenter.login;
 
 import android.support.annotation.NonNull;
 import android.util.Base64;
+import android.util.Log;
 
 import com.appunite.rx.ResponseOrError;
 import com.appunite.rx.dagger.NetworkScheduler;
@@ -35,7 +36,6 @@ public class LoginPresenter {
                           @NonNull @UiScheduler final Scheduler uiScheduler,
                           @NonNull final TokenPreferences tokenPreferences) {
         this.tokenPreferences = tokenPreferences;
-
         loginErrorObservable = loginObserver
                 .map(new MapParamsToToken())
                 .doOnNext(new SaveTokenAction(tokenPreferences))
