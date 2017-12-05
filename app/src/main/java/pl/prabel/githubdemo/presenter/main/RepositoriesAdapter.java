@@ -1,11 +1,10 @@
 package pl.prabel.githubdemo.presenter.main;
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.appunite.detector.ChangesDetector;
 import com.appunite.detector.SimpleDetector;
@@ -15,8 +14,9 @@ import com.jakewharton.rxbinding.view.RxView;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.BindInt;
 import butterknife.ButterKnife;
-import pl.prabel.githubdemo.BR;
 import pl.prabel.githubdemo.R;
 import pl.prabel.githubdemo.api.model.RepoModel;
 import rx.Observer;
@@ -34,19 +34,20 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final ViewDataBinding bind;
-
         private Subscription subscription;
+        @Bind(R.id.repo_description_text_view)
+        TextView repoDescriptionTextView;
+        @BindInt(R.id.repo_name_text_view)
+        TextView repoNameTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            bind = DataBindingUtil.bind(itemView);
             ButterKnife.bind(this, itemView);
         }
 
         public void bind(final RepoModel item) {
-            bind.setVariable(BR.item, item);
-
+            repoDescriptionTextView.setText(item.getFullName());
+            repoNameTextView.setText(item.getDescription());
             subscription = RxView.clicks(itemView)
                     .map(new Func1<Void, RepoModel>() {
                         @Override

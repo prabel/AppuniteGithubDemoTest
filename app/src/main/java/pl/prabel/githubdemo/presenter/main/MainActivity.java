@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding.view.RxView;
 
 import javax.annotation.Nonnull;
@@ -77,10 +76,8 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
 
         compositeSubscription = Subscriptions.from(
                 presenter.getProgressObservable()
-                        .compose(lifecycleMainObservable().<Boolean>bindLifecycle())
                         .subscribe(RxView.visibility(progressView)),
                 presenter.getErrorObservable()
-                        .compose(lifecycleMainObservable().<Throwable>bindLifecycle())
                         .map(new Func1<Throwable, String>() {
                             @Override
                             public String call(Throwable throwable) {
@@ -92,10 +89,8 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
                         })
                         .subscribe(new CustomViewAction.SnackBarErrorMessageAction(container)),
                 presenter.getRepositoriesObservable()
-                        .compose(lifecycleMainObservable().<ImmutableList<RepoModel>>bindLifecycle())
                         .subscribe(adapter),
                 presenter.repoClickObservable()
-                        .compose(lifecycleMainObservable().<RepoModel>bindLifecycle())
                         .subscribe(new Action1<RepoModel>() {
                             @Override
                             public void call(RepoModel repoModel) {
