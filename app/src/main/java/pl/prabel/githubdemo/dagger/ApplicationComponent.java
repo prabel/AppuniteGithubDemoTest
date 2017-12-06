@@ -14,6 +14,7 @@ import pl.prabel.githubdemo.MainApplication;
 import pl.prabel.githubdemo.api.ApiService;
 import pl.prabel.githubdemo.content.TokenPreferences;
 import pl.prabel.githubdemo.dao.GithubDao;
+import pl.prabel.githubdemo.presenter.issues.IssuesActivity;
 import rx.Scheduler;
 
 @Singleton
@@ -32,4 +33,5 @@ public interface ApplicationComponent {
     GithubDao githubDao();
 
     void inject(MainApplication app);
+    void inject(IssuesActivity issuesActivity);
 }
