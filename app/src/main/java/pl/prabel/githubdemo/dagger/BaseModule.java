@@ -37,6 +37,7 @@ import pl.prabel.githubdemo.content.AppConst;
 import pl.prabel.githubdemo.content.TokenPreferences;
 import pl.prabel.githubdemo.parser.ImmutableListDeserializer;
 import pl.prabel.githubdemo.parser.ImmutableSetDeserializer;
+import pl.prabel.githubdemo.presenter.issues.IssuesPresenter;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;

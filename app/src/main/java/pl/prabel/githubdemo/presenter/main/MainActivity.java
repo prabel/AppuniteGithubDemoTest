@@ -27,6 +27,7 @@ import pl.prabel.githubdemo.dagger.ActivityScope;
 import pl.prabel.githubdemo.dagger.ApplicationComponent;
 import pl.prabel.githubdemo.dagger.BaseActivityComponent;
 import pl.prabel.githubdemo.presenter.BaseActivity;
+import pl.prabel.githubdemo.presenter.issues.IssuesActivity;
 import pl.prabel.githubdemo.presenter.login.LoginActivity;
 import pl.prabel.githubdemo.rx.CustomViewAction;
 import rx.Observer;
@@ -37,7 +38,7 @@ import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends BaseActivity implements RepositoriesAdapter.Listener {
 
-    @Bind(R.id.recycler_view)
+    @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -73,7 +74,6 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
-
         compositeSubscription = Subscriptions.from(
                 presenter.getProgressObservable()
                         .subscribe(RxView.visibility(progressView)),
@@ -97,6 +97,11 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
                                 if (repoModel.getOpenIssues() == 0) {
                                     CustomViewAction.showInfromationSnackbar(getString(R.string.empty_issues), container);
                                     return;
+                                } else {
+                                    Intent intent = new Intent(MainActivity.this, IssuesActivity.class);
+                                    intent.putExtra("OWNER", repoModel.getOwner().getLogin());
+                                    intent.putExtra("ID", repoModel.getName());
+                                    startActivity(intent);
                                 }
 
                                 // TODO open RepositoryActivity
