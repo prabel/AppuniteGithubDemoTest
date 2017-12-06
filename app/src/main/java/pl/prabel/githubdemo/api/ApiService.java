@@ -12,6 +12,6 @@ public interface ApiService {
     @GET("/authorizations")
     Observable<Response> authorizations();
 
-    @GET("/user/repos?page=2")
+    @GET("/user/repos")
     Observable<ImmutableList<RepoModel>> getRepositories();
 }
