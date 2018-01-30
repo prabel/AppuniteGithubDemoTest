@@ -28,6 +28,7 @@ import pl.prabel.githubdemo.dagger.ApplicationComponent;
 import pl.prabel.githubdemo.dagger.BaseActivityComponent;
 import pl.prabel.githubdemo.presenter.BaseActivity;
 import pl.prabel.githubdemo.presenter.login.LoginActivity;
+import pl.prabel.githubdemo.presenter.repo.RepositoryActivity;
 import pl.prabel.githubdemo.rx.CustomViewAction;
 import rx.Observer;
 import rx.functions.Action1;
@@ -97,10 +98,14 @@ public class MainActivity extends BaseActivity implements RepositoriesAdapter.Li
                                 if (repoModel.getOpenIssues() == 0) {
                                     CustomViewAction.showInfromationSnackbar(getString(R.string.empty_issues), container);
                                     return;
+                                }else if(repoModel.getOwner() != null){
+                                    String owner = repoModel.getOwner().getLogin();
+                                    Intent intent = new Intent(MainActivity.this, RepositoryActivity.class);
+                                    intent.putExtra(RepositoryActivity.OWNER_KEY, owner);
+                                    intent.putExtra(RepositoryActivity.REPO_KEY, repoModel.getName());
+                                    startActivity(intent);
                                 }
 
-                                // TODO open RepositoryActivity
-                                // https://developer.github.com/v3/issues/
                             }
                         }));
     }

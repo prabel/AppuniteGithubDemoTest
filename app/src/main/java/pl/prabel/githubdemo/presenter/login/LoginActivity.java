@@ -35,6 +35,7 @@ import rx.subscriptions.Subscriptions;
 
 public class LoginActivity extends BaseActivity {
 
+    @Bind(R.id.password_edit_text)
     EditText passwordEditText;
     @Bind(R.id.username_edit_text)
     EditText usernameEditText;
